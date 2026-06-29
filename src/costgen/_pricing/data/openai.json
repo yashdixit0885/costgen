@@ -6,12 +6,22 @@
   "cache_read_multiplier": "0.5",
   "batch_discount": "0.5",
   "records": [
-    { "model": "gpt-4o",        "input_price_per_mtok": "2.50", "output_price_per_mtok": "10.00", "cache_read_multiplier": "0.5" },
-    { "model": "gpt-4o-mini",   "input_price_per_mtok": "0.15", "output_price_per_mtok": "0.60",  "cache_read_multiplier": "0.5" },
-    { "model": "gpt-4.1",       "input_price_per_mtok": "2.00", "output_price_per_mtok": "8.00",  "cache_read_multiplier": "0.25" },
-    { "model": "gpt-4.1-mini",  "input_price_per_mtok": "0.40", "output_price_per_mtok": "1.60",  "cache_read_multiplier": "0.25" },
-    { "model": "gpt-4.1-nano",  "input_price_per_mtok": "0.10", "output_price_per_mtok": "0.40",  "cache_read_multiplier": "0.25" },
-    { "model": "o3",            "input_price_per_mtok": "2.00", "output_price_per_mtok": "8.00",  "cache_read_multiplier": "0.25" },
-    { "model": "o4-mini",       "input_price_per_mtok": "1.10", "output_price_per_mtok": "4.40",  "cache_read_multiplier": "0.25" }
+    { "model": "gpt-5.2",      "input_price_per_mtok": "1.75",  "output_price_per_mtok": "14.00",  "cache_read_multiplier": "0.1" },
+    { "model": "gpt-5.2-pro",  "input_price_per_mtok": "21.00", "output_price_per_mtok": "168.00", "cache_read_multiplier": "0" },
+    { "model": "gpt-5.1",      "input_price_per_mtok": "1.25",  "output_price_per_mtok": "10.00",  "cache_read_multiplier": "0.1" },
+    { "model": "gpt-5",        "input_price_per_mtok": "1.25",  "output_price_per_mtok": "10.00",  "cache_read_multiplier": "0.1" },
+    { "model": "gpt-5-mini",   "input_price_per_mtok": "0.25",  "output_price_per_mtok": "2.00",   "cache_read_multiplier": "0.1" },
+    { "model": "gpt-5-nano",   "input_price_per_mtok": "0.05",  "output_price_per_mtok": "0.40",   "cache_read_multiplier": "0.1" },
+    { "model": "gpt-5-pro",    "input_price_per_mtok": "15.00", "output_price_per_mtok": "120.00", "cache_read_multiplier": "0" },
+    { "model": "gpt-4.1",      "input_price_per_mtok": "2.00",  "output_price_per_mtok": "8.00",   "cache_read_multiplier": "0.25" },
+    { "model": "gpt-4.1-mini", "input_price_per_mtok": "0.40",  "output_price_per_mtok": "1.60",   "cache_read_multiplier": "0.25" },
+    { "model": "gpt-4.1-nano", "input_price_per_mtok": "0.10",  "output_price_per_mtok": "0.40",   "cache_read_multiplier": "0.25" },
+    { "model": "gpt-4o",       "input_price_per_mtok": "2.50",  "output_price_per_mtok": "10.00",  "cache_read_multiplier": "0.5" },
+    { "model": "gpt-4o-mini",  "input_price_per_mtok": "0.15",  "output_price_per_mtok": "0.60",   "cache_read_multiplier": "0.5" },
+    { "model": "o4-mini",      "input_price_per_mtok": "1.10",  "output_price_per_mtok": "4.40",   "cache_read_multiplier": "0.25" },
+    { "model": "o3",           "input_price_per_mtok": "2.00",  "output_price_per_mtok": "8.00",   "cache_read_multiplier": "0.25" },
+    { "model": "o3-mini",      "input_price_per_mtok": "1.10",  "output_price_per_mtok": "4.40",   "cache_read_multiplier": "0.5" },
+    { "model": "o1",           "input_price_per_mtok": "15.00", "output_price_per_mtok": "60.00",  "cache_read_multiplier": "0.5" },
+    { "model": "o1-mini",      "input_price_per_mtok": "1.10",  "output_price_per_mtok": "4.40",   "cache_read_multiplier": "0.5" }
   ]
 }
