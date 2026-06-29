@@ -12,6 +12,7 @@ map to the cache-read dimension (OpenAI has no separate cache-write charge).
 
 from __future__ import annotations
 
+import inspect
 from typing import Any
 
 from .._engine.models import Usage
@@ -34,6 +35,16 @@ def _extract_usage(raw: Any) -> Any:
         return None
     if isinstance(raw, dict):
         return raw.get("usage", raw)
+    usage = getattr(raw, "usage", None)
+    if usage is not None:
+        return usage
+    # Raw API response (e.g. the openai SDK's `with_raw_response.create`, used by
+    # langchain-openai) exposes no `.usage` directly — parse it to get the model.
+    # `.parse()` is cached by the SDK, so any later caller's parse is free.
+    parse = getattr(raw, "parse", None)
+    if callable(parse) and not inspect.iscoroutinefunction(parse):
+        parsed = parse()
+        return getattr(parsed, "usage", None)
     return getattr(raw, "usage", raw)
 
 

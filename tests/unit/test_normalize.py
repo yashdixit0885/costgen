@@ -57,6 +57,21 @@ def test_openai_absent_usage_returns_none():
     assert oa.to_usage({"usage": {}}) is None
 
 
+def test_openai_unwraps_raw_response_via_parse():
+    # Mimics openai's LegacyAPIResponse: no .usage, but a (cached) .parse().
+    parsed = SimpleNamespace(usage=SimpleNamespace(prompt_tokens=1000, completion_tokens=50))
+
+    class RawResponse:
+        usage = None  # raw responses don't expose usage directly
+
+        def parse(self):
+            return parsed
+
+    u = oa.to_usage(RawResponse())
+    assert u is not None
+    assert u.input_tokens == 1000 and u.output_tokens == 50
+
+
 def test_normalize_dispatch_and_detect():
     assert normalize("anthropic", {"usage": {"input_tokens": 1}}).input_tokens == 1
     assert normalize("nope", {"usage": {}}) is None
