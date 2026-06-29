@@ -10,13 +10,15 @@ The graph:
 plan (OpenAI gpt-4o-mini)  ->  research (Anthropic claude-haiku-4-5)  ->  synthesize (Anthropic claude-opus-4-8)
 ```
 
-## Why a callback (not `install()`)?
+## Why a callback?
 
-LangChain normalizes token usage onto each response, and some integrations
-(notably `langchain-openai`) route through the SDK's raw-response path that
-SDK-level auto-instrumentation doesn't see. The **callback adapter** reads
-LangChain's usage and captures *any* LangChain/LangGraph LLM — OpenAI, Anthropic,
-and others — uniformly.
+The **callback adapter** reads LangChain's normalized usage and captures *any*
+LangChain/LangGraph LLM — OpenAI, Anthropic, and others — uniformly, and lets you
+attribute cost **per node** with `track()`.
+
+(`costgen.install()` also works for LangChain — including `langchain-openai`, whose
+raw-response path costgen now unwraps to recover usage. The callback is still
+preferred here for per-node grouping and uniform multi-provider capture.)
 
 ```python
 import costgen
