@@ -10,6 +10,7 @@ from __future__ import annotations
 from decimal import Decimal
 
 from .._engine.models import Origin, PricingRecord
+from . import _alias
 
 
 def _key(provider: str, model: str) -> tuple[str, str]:
@@ -56,9 +57,25 @@ class PricingRegistry:
         return record
 
     # -- lookup ------------------------------------------------------------
-    def lookup(self, provider: str, model: str) -> PricingRecord | None:
-        key = _key(provider, model)
-        return self._overrides.get(key) or self._bundled.get(key)
+    def lookup(
+        self, provider: str, model: str, *, resolve_aliases: bool = True
+    ) -> PricingRecord | None:
+        """Find a price for (provider, model).
+
+        Exact match wins (override before bundled). Failing that, and if
+        ``resolve_aliases`` is set, fall back to base-model candidates so dated
+        snapshots and cloud-prefixed/versioned ids (e.g. ``gpt-4o-2024-08-06``,
+        ``us.anthropic.claude-opus-4-8``) price against the base model instead of
+        being left unpriced. For cloud hosts this is a first-party-list-price
+        approximation — register exact rates with ``set_price`` to override it.
+        """
+        candidates = _alias.candidates(model) if resolve_aliases else [model]
+        for cand in candidates:
+            key = _key(provider, cand)
+            match = self._overrides.get(key) or self._bundled.get(key)
+            if match is not None:
+                return match
+        return None
 
     def freshness(self, provider: str) -> str | None:
         """Earliest (most stale) ``last_verified`` among that provider's records."""

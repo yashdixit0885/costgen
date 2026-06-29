@@ -208,19 +208,24 @@ reads token usage from the response.
 | **Native** cloud SDKs (`boto3`, Google GenAI/Vertex SDK, Azure REST) | non-`openai`/`anthropic` | ❌ → `costgen.record(...)` |
 | Non-Claude/OpenAI models (Gemini, Llama, Mistral, …) | various | ❌ not a v1 provider |
 
-> ⚠️ **Cloud deployments need pricing configuration.** Two reasons:
-> 1. **Model ids differ.** Cloud responses report deployment names or versioned
->    ids — `gpt-4o-2024-08-06`, `anthropic.claude-opus-4-...`, `claude-...@<date>`
->    — that don't match the bundled price keys, so calls show as **`unpriced`**
->    (surfaced, never silently priced as zero).
-> 2. **Cloud rates differ** from first-party list prices (region-specific,
->    negotiated, or marked up).
+> **Pricing on cloud — what's automatic vs. what to configure.**
 >
-> Register your rates once — effective immediately, no reinstall:
+> costgen **auto-resolves** dated snapshots and cloud-prefixed / `@`-versioned ids
+> to the base model, so they price out of the box at the base-model **list price**:
+> `gpt-4o-2024-08-06` → `gpt-4o`, `us.anthropic.claude-opus-4-8` → `claude-opus-4-8`,
+> `claude-opus-4-8@20251101` → `claude-opus-4-8`.
+>
+> Configure prices when you need exactness:
+> - **Negotiated / region-specific rates** differ from first-party list prices.
+> - **Custom Azure deployment names** (e.g. `my-gpt4o-deploy`) can't be
+>   auto-mapped — set a price for them explicitly.
+>
+> An exact override always wins over alias resolution; effective immediately, no
+> reinstall:
 >
 > ```python
 > costgen.set_price(
->     provider="openai", model="gpt-4o-2024-08-06",      # the id your cloud returns
+>     provider="openai", model="my-gpt4o-deploy",        # the id your cloud returns
 >     input_price_per_mtok=2.50, output_price_per_mtok=10.00,
 >     source="Azure AI Foundry pricing (East US)", last_verified="2026-06-29",
 > )
