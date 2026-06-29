@@ -1,0 +1,88 @@
+# costgen
+
+**Add cost visibility to any LLM app — new or existing, raw-SDK or framework-based — in one line.**
+
+`costgen` is a zero-dependency Python package that tracks and predicts the dollar
+cost of your LLM usage. One provider-agnostic cost engine sits behind thin capture
+adapters, so you can retrofit an existing app without touching a single call site.
+
+```bash
+pip install costgen          # core (zero runtime deps)
+pip install "costgen[all]"   # + openai/anthropic instrumentation + estimation
+# or: uv pip install "costgen[all]"
+```
+
+## One-line retrofit (measure actual cost)
+
+```python
+import costgen
+costgen.install()            # the only line you add
+
+# ... your existing, unmodified app code makes its usual LLM calls ...
+
+costgen.print_report()       # total + breakdown by provider / model / group
+costgen.export("run.json")   # structured, diffable export
+```
+
+`install()` patches the **openai** and **anthropic** SDKs, so calls made by
+frameworks that route through those SDKs (LangChain, LangGraph, LlamaIndex…) are
+captured automatically — no framework-specific setup.
+
+## Attribute cost to features
+
+```python
+with costgen.track("checkout", tier="pro"):
+    ...   # calls here are attributed to the "checkout" group
+```
+
+## Predict cost before sending
+
+```python
+est = costgen.estimate(provider="anthropic", model="claude-opus-4-8",
+                       messages=msgs, assumed_output_tokens=500)
+print(est.kind, est.predicted_cost)   # "estimate"  $...
+```
+
+Anthropic estimation uses the SDK's native `count_tokens`; OpenAI uses `tiktoken`.
+Estimates are always clearly labelled and kept separate from measured costs.
+
+## Track anything auto-instrumentation can't reach
+
+```python
+costgen.record(provider="openai", model="gpt-4o", usage=raw_response_usage, group="batch")
+```
+
+## CI cost-regression gate
+
+```bash
+costgen diff baseline.json run.json   # exits non-zero if cost increased
+```
+
+## v1 coverage boundary
+
+`install()` captures calls that route through the **official openai/anthropic
+SDKs** (which covers most framework usage). The following are **not** auto-captured
+in v1 — use `track()` / `record()` for them:
+
+- LiteLLM and other router/abstraction layers
+- Cloud-gateway SDKs (Amazon Bedrock, Google Vertex)
+- Raw HTTP calls to provider REST APIs
+
+## Pricing data & provenance
+
+Bundled prices live in `costgen/_pricing/data/*.json`; every record carries a
+`source` and a `last_verified` date, surfaced in reports. Override without a
+release:
+
+```python
+costgen.set_price(provider="anthropic", model="claude-opus-4-8",
+                  input_price_per_mtok=4.0, output_price_per_mtok=20.0,
+                  source="enterprise-contract", last_verified="2026-06-01")
+```
+
+> Pricing data is refreshed periodically and re-verified before each release.
+> Open a PR (see `CONTRIBUTING.md`) to update prices or add a provider.
+
+## License
+
+MIT.

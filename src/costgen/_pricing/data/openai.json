@@ -1,0 +1,17 @@
+{
+  "provider": "openai",
+  "source": "https://openai.com/api/pricing/",
+  "last_verified": "2026-06-29",
+  "cache_write_multiplier": {},
+  "cache_read_multiplier": "0.5",
+  "batch_discount": "0.5",
+  "records": [
+    { "model": "gpt-4o",        "input_price_per_mtok": "2.50", "output_price_per_mtok": "10.00", "cache_read_multiplier": "0.5" },
+    { "model": "gpt-4o-mini",   "input_price_per_mtok": "0.15", "output_price_per_mtok": "0.60",  "cache_read_multiplier": "0.5" },
+    { "model": "gpt-4.1",       "input_price_per_mtok": "2.00", "output_price_per_mtok": "8.00",  "cache_read_multiplier": "0.25" },
+    { "model": "gpt-4.1-mini",  "input_price_per_mtok": "0.40", "output_price_per_mtok": "1.60",  "cache_read_multiplier": "0.25" },
+    { "model": "gpt-4.1-nano",  "input_price_per_mtok": "0.10", "output_price_per_mtok": "0.40",  "cache_read_multiplier": "0.25" },
+    { "model": "o3",            "input_price_per_mtok": "2.00", "output_price_per_mtok": "8.00",  "cache_read_multiplier": "0.25" },
+    { "model": "o4-mini",       "input_price_per_mtok": "1.10", "output_price_per_mtok": "4.40",  "cache_read_multiplier": "0.25" }
+  ]
+}

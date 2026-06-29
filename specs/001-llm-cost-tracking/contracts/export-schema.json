@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://costgen.dev/schemas/export/v1.json",
+  "title": "costgen cost export (v1)",
+  "description": "Structured, cross-run-diffable cost report produced by costgen.export(format=\"json\"). The JSON form is canonical; CSV is a flattened projection of `calls` + the breakdown tables.",
+  "type": "object",
+  "required": ["schema_version", "currency", "grand_total", "measured_total", "estimated_total", "by_provider", "by_model", "by_group", "pricing_freshness", "incomplete_count", "unpriced_count"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "currency": { "type": "string", "const": "USD" },
+    "grand_total": { "type": "string", "description": "Measured grand total as a decimal string (string, not float, for exactness)." },
+    "measured_total": { "type": "string" },
+    "estimated_total": { "type": "string", "description": "Kept separate; NOT included in grand_total." },
+    "incomplete_count": { "type": "integer", "minimum": 0 },
+    "unpriced_count": { "type": "integer", "minimum": 0 },
+    "by_provider": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "description": "Decimal-string cost." }
+    },
+    "by_model": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "by_group": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "total_cost", "call_count"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "total_cost": { "type": "string" },
+          "call_count": { "type": "integer", "minimum": 0 },
+          "by_model": { "type": "object", "additionalProperties": { "type": "string" } }
+        }
+      }
+    },
+    "pricing_freshness": {
+      "type": "object",
+      "description": "Per-provider last_verified date of the pricing data used.",
+      "additionalProperties": { "type": "string", "format": "date" }
+    },
+    "calls": {
+      "type": "array",
+      "description": "Optional per-call detail (omitted in summary-only exports).",
+      "items": {
+        "type": "object",
+        "required": ["id", "provider", "model", "completeness", "capture_source"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "provider": { "type": "string" },
+          "model": { "type": "string" },
+          "measured_cost": { "type": ["string", "null"] },
+          "estimated_cost": { "type": ["string", "null"] },
+          "completeness": { "type": "string", "enum": ["complete", "partial", "incomplete", "unpriced"] },
+          "capture_source": { "type": "string", "enum": ["auto", "scoped", "explicit"] },
+          "group": { "type": ["string", "null"] },
+          "tags": { "type": "object", "additionalProperties": { "type": "string" } },
+          "pricing_origin": { "type": "string", "enum": ["bundled", "override", "none"] },
+          "usage": {
+            "type": ["object", "null"],
+            "additionalProperties": false,
+            "properties": {
+              "input_tokens": { "type": "integer", "minimum": 0 },
+              "output_tokens": { "type": "integer", "minimum": 0 },
+              "cache_write_tokens": { "type": "integer", "minimum": 0 },
+              "cache_read_tokens": { "type": "integer", "minimum": 0 },
+              "reasoning_tokens": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
