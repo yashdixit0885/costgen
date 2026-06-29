@@ -257,7 +257,7 @@ periodically and re-verified before each release. To change a price locally, use
 | Provider | Models | Measure | Estimate |
 |----------|--------|:-------:|:--------:|
 | Anthropic | Claude (Opus / Sonnet / Haiku / Fable) | ✅ | ✅ (`count_tokens`) |
-| OpenAI | GPT-4o / 4.1 / o-series | ✅ | ✅ (`tiktoken`) |
+| OpenAI | GPT-5 / 4.1 / 4o / o-series | ✅ | ✅ (`tiktoken`) |
 
 The cost engine is provider-agnostic — adding a provider means adding pricing data
 and a small adapter, never editing the calculation core.
