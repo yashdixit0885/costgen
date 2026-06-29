@@ -41,6 +41,8 @@ __all__ = [
     "wrap",
     # estimation
     "estimate",
+    # integrations
+    "langchain_callback",
     # pricing
     "set_price",
     "load_prices",
@@ -137,6 +139,23 @@ def estimate(
             "note": "output length is assumed; actual measured cost may differ",
         },
     )
+
+
+# -- Integrations ----------------------------------------------------------
+def langchain_callback(
+    *,
+    provider: str | None = None,
+    group: str | None = None,
+    tags: Mapping[str, str] | None = None,
+):
+    """Return a LangChain/LangGraph callback handler that captures LLM cost.
+
+    Attach it via ``callbacks=[...]`` on a chat model or ``config={"callbacks": [...]}``
+    on an ``invoke``. Requires the ``costgen[langchain]`` extra.
+    """
+    from .integrations.langchain import CostGenCallbackHandler
+
+    return CostGenCallbackHandler(provider=provider, group=group, tags=dict(tags or {}))
 
 
 # -- Pricing overrides -----------------------------------------------------

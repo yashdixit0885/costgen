@@ -28,24 +28,24 @@ def test_demo_runs_offline_and_reports_expected_cost():
     costgen.install()         # the one line
     try:
         results = existing_app.process_tickets(existing_app.TICKETS)
+        assert len(results) == 5
+
+        report = costgen.get_report()
+        # 5 tickets x 3 stages = 15 captured calls, all measured.
+        calls = costgen.get_tracker().calls()
+        assert len(calls) == 15
+        assert all(c.measured_cost is not None for c in calls)
+
+        # Two providers, three models; breakdowns sum to the grand total.
+        assert set(report.by_provider) == {"openai", "anthropic"}
+        assert set(report.by_model) == {"gpt-4o-mini", "claude-haiku-4-5", "claude-opus-4-8"}
+        assert sum(report.by_model.values()) == report.grand_total
+        assert report.grand_total > Decimal(0)
+
+        # The Opus draft stage is the dominant cost (the demo's whole point).
+        opus = report.by_model["claude-opus-4-8"]
+        assert opus == max(report.by_model.values())
+        assert opus / report.grand_total > Decimal("0.8")
     finally:
         costgen.uninstall()
-
-    assert len(results) == 5
-
-    report = costgen.get_report()
-    # 5 tickets x 3 stages = 15 captured calls, all measured.
-    calls = costgen.get_tracker().calls()
-    assert len(calls) == 15
-    assert all(c.measured_cost is not None for c in calls)
-
-    # Two providers, three models; breakdowns sum to the grand total.
-    assert set(report.by_provider) == {"openai", "anthropic"}
-    assert set(report.by_model) == {"gpt-4o-mini", "claude-haiku-4-5", "claude-opus-4-8"}
-    assert sum(report.by_model.values()) == report.grand_total
-    assert report.grand_total > Decimal(0)
-
-    # The Opus draft stage is the dominant cost (the demo's whole point).
-    opus = report.by_model["claude-opus-4-8"]
-    assert opus == max(report.by_model.values())
-    assert opus / report.grand_total > Decimal("0.8")
+        offline.disable()     # restore real SDK methods (test isolation)

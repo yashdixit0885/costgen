@@ -21,8 +21,12 @@ from costgen._pricing import loader as pricing
 
 @pytest.fixture(autouse=True)
 def _reset_tracker():
+    instrument.uninstall()
     get_tracker().reset()
     yield
+    # Guarantee isolation: no instrumentation or accumulated calls leak between
+    # tests (some example apps call costgen.install() at import time).
+    instrument.uninstall()
     get_tracker().reset()
 
 

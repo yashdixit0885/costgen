@@ -43,10 +43,27 @@ _DRAFT = (
 )
 
 
+_originals: dict = {}
+
+
+def disable() -> None:
+    """Restore the real SDK create methods (used by tests for isolation)."""
+    import anthropic.resources.messages as messages_mod
+    import openai.resources.chat.completions as completions_mod
+
+    if "openai" in _originals:
+        completions_mod.Completions.create = _originals.pop("openai")
+    if "anthropic" in _originals:
+        messages_mod.Messages.create = _originals.pop("anthropic")
+
+
 def enable() -> None:
     """Patch the provider SDK create methods with offline stubs."""
     import anthropic.resources.messages as messages_mod
     import openai.resources.chat.completions as completions_mod
+
+    _originals.setdefault("openai", completions_mod.Completions.create)
+    _originals.setdefault("anthropic", messages_mod.Messages.create)
 
     def fake_openai_create(self, **kwargs):
         # Urgency classification — tiny prompt, one-word answer.
