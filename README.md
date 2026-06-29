@@ -52,7 +52,11 @@ By model:
 
 ## Install
 
-> Not on PyPI yet — install from source for now:
+```bash
+pip install "costgen[all]"        # once published to PyPI
+```
+
+Until the first PyPI release (and for the latest from `main`), install from source:
 
 ```bash
 pip install "costgen[all] @ git+https://github.com/yashdixit0885/costgen.git"
