@@ -178,14 +178,58 @@ costgen.set_price(provider="anthropic", model="claude-opus-4-8",
 
 ## What's auto-captured (and what isn't)
 
-`install()` captures calls that route through the **official OpenAI/Anthropic
-SDKs** — which covers most apps and many frameworks. For LangChain/LangGraph, use
-`langchain_callback()`. These paths are **not** auto-captured in v1 — track them
-with `track()` / `record()`:
+Rule of thumb: **costgen auto-captures any call that goes through the official
+`openai` or `anthropic` Python SDK** — including those SDKs' cloud client classes.
+It does **not** see calls made through a cloud provider's *native* SDK or raw HTTP.
+
+For LangChain/LangGraph, use `costgen.langchain_callback()`. These paths are **not**
+auto-captured — use `costgen.record(...)`:
 
 - LiteLLM and other router/abstraction layers
-- Cloud-gateway SDKs (Amazon Bedrock, Google Vertex)
-- Raw HTTP calls to provider REST APIs
+- **Native** cloud SDKs: `boto3` (Bedrock `invoke_model` / `converse`), Google's
+  `google-genai` / Vertex SDK, direct Azure REST calls
+- Raw HTTP calls to any provider's REST API
+
+### Using models hosted on Azure, AWS, or GCP
+
+The `openai` and `anthropic` SDKs ship **cloud client classes** that reuse the
+*same* methods costgen patches — so `install()` captures them too (verified).
+Your credentials are irrelevant: **Azure Key Vault, AWS IAM roles, GCP ADC, and
+managed identities make no difference** to whether costgen captures cost — it only
+reads token usage from the response.
+
+| Where the model lives | Typical client | Auto-captured? |
+|-----------------------|----------------|----------------|
+| **Azure** OpenAI / AI Foundry | `openai` → `AzureOpenAI(...)` | ✅ `install()` |
+| **AWS** Bedrock (Claude) | `anthropic` → `AnthropicBedrock(...)` | ✅ `install()` |
+| **GCP** Vertex AI (Claude) | `anthropic` → `AnthropicVertex(...)` | ✅ `install()` |
+| Microsoft Foundry (Claude) | `anthropic` → `AnthropicFoundry(...)` | ✅ `install()` |
+| Any of the above via **LangChain** | `AzureChatOpenAI`, `ChatBedrock`, … | ✅ `langchain_callback()` |
+| **Native** cloud SDKs (`boto3`, Google GenAI/Vertex SDK, Azure REST) | non-`openai`/`anthropic` | ❌ → `costgen.record(...)` |
+| Non-Claude/OpenAI models (Gemini, Llama, Mistral, …) | various | ❌ not a v1 provider |
+
+> ⚠️ **Cloud deployments need pricing configuration.** Two reasons:
+> 1. **Model ids differ.** Cloud responses report deployment names or versioned
+>    ids — `gpt-4o-2024-08-06`, `anthropic.claude-opus-4-...`, `claude-...@<date>`
+>    — that don't match the bundled price keys, so calls show as **`unpriced`**
+>    (surfaced, never silently priced as zero).
+> 2. **Cloud rates differ** from first-party list prices (region-specific,
+>    negotiated, or marked up).
+>
+> Register your rates once — effective immediately, no reinstall:
+>
+> ```python
+> costgen.set_price(
+>     provider="openai", model="gpt-4o-2024-08-06",      # the id your cloud returns
+>     input_price_per_mtok=2.50, output_price_per_mtok=10.00,
+>     source="Azure AI Foundry pricing (East US)", last_verified="2026-06-29",
+> )
+> # or load a file of all your deployment prices:  costgen.load_prices("cloud_prices.json")
+> ```
+>
+> Native cloud SDKs (`boto3`, Google's SDK) and non-Claude/OpenAI models (Gemini,
+> Llama, Mistral) aren't auto-captured or priced in v1 — capture them explicitly
+> with `costgen.record(provider=..., model=..., usage=...)` plus a `set_price(...)`.
 
 ---
 
