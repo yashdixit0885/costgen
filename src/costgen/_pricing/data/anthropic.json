@@ -1,0 +1,16 @@
+{
+  "provider": "anthropic",
+  "source": "https://platform.claude.com/docs/en/about-claude/models/overview",
+  "last_verified": "2026-06-29",
+  "cache_write_multiplier": { "5m": "1.25", "1h": "2.0" },
+  "cache_read_multiplier": "0.1",
+  "batch_discount": "0.5",
+  "records": [
+    { "model": "claude-fable-5",   "input_price_per_mtok": "10.00", "output_price_per_mtok": "50.00" },
+    { "model": "claude-opus-4-8",  "input_price_per_mtok": "5.00",  "output_price_per_mtok": "25.00" },
+    { "model": "claude-opus-4-7",  "input_price_per_mtok": "5.00",  "output_price_per_mtok": "25.00" },
+    { "model": "claude-opus-4-6",  "input_price_per_mtok": "5.00",  "output_price_per_mtok": "25.00" },
+    { "model": "claude-sonnet-4-6","input_price_per_mtok": "3.00",  "output_price_per_mtok": "15.00" },
+    { "model": "claude-haiku-4-5", "input_price_per_mtok": "1.00",  "output_price_per_mtok": "5.00" }
+  ]
+}
