@@ -36,3 +36,6 @@ Thumbs.db
 # Env
 .env
 .env.*
+
+# uv lockfile (not committed for a library)
+uv.lock
