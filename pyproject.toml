@@ -27,8 +27,9 @@ dependencies = []
 # Supported provider-SDK version ranges are an explicit contract (FR-025);
 # the compatibility matrix test (T045) tests against these declared ranges.
 openai = ["openai>=1.40,<2", "tiktoken>=0.7"]
-anthropic = ["anthropic>=0.40,<1"]
-all = ["openai>=1.40,<2", "tiktoken>=0.7", "anthropic>=0.40,<1"]
+anthropic = ["anthropic>=0.40,<2"]
+langchain = ["langchain-core>=0.3,<2"]
+all = ["openai>=1.40,<2", "tiktoken>=0.7", "anthropic>=0.40,<2", "langchain-core>=0.3,<2"]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6"]
 
 [project.scripts]

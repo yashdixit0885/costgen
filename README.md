@@ -25,8 +25,23 @@ costgen.export("run.json")   # structured, diffable export
 ```
 
 `install()` patches the **openai** and **anthropic** SDKs, so calls made by
-frameworks that route through those SDKs (LangChain, LangGraph, LlamaIndex…) are
-captured automatically — no framework-specific setup.
+frameworks that route through those SDKs are captured automatically.
+
+### LangChain / LangGraph
+
+For LangChain/LangGraph apps, attach the callback handler — it captures every LLM
+the chain or graph runs (including `langchain-openai`, which uses the SDK's
+raw-response path that `install()` doesn't see):
+
+```python
+import costgen
+cb = costgen.langchain_callback()
+llm = ChatAnthropic(model="claude-opus-4-8", callbacks=[cb])
+# wrap a graph node for per-node cost:  with costgen.track("synthesize"): ...
+```
+
+Requires `pip install "costgen[langchain]"`. See
+[examples/langgraph_agent/](examples/langgraph_agent/).
 
 ### See it on a real app (no API keys needed)
 

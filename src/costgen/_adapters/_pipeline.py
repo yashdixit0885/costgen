@@ -36,6 +36,29 @@ def _observe(
     batch: bool,
 ) -> TrackedCall | None:
     usage = normalize.normalize(provider, raw_usage)
+    return _finalize(
+        provider=provider,
+        model=model,
+        usage=usage,
+        capture_source=capture_source,
+        group=group,
+        tags=tags,
+        call_id=call_id,
+        batch=batch,
+    )
+
+
+def _finalize(
+    *,
+    provider: str,
+    model: str,
+    usage,
+    capture_source: CaptureSource,
+    group: str | None,
+    tags: Mapping[str, str] | None,
+    call_id: str | None,
+    batch: bool,
+) -> TrackedCall | None:
     record = pricing.lookup(provider, model)
     cost, completeness = calculator.cost_for(usage, record, batch=batch)
 
@@ -66,6 +89,32 @@ def _observe(
         pricing_origin=record.origin if record is not None else Origin.NONE,
     )
     return tracker.record(call)
+
+
+def observe_usage(
+    *,
+    provider: str,
+    model: str,
+    usage,
+    capture_source: CaptureSource = CaptureSource.AUTO,
+    group: str | None = None,
+    tags: Mapping[str, str] | None = None,
+    call_id: str | None = None,
+    batch: bool = False,
+) -> TrackedCall | None:
+    """Guarded entry point for a pre-built normalized ``Usage`` (used by the
+    framework callback adapters). Never raises into the caller."""
+    return run_safely(
+        _finalize,
+        provider=provider,
+        model=model,
+        usage=usage,
+        capture_source=capture_source,
+        group=group,
+        tags=tags,
+        call_id=call_id,
+        batch=batch,
+    )
 
 
 def observe(
