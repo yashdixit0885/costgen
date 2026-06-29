@@ -28,6 +28,25 @@ costgen.export("run.json")   # structured, diffable export
 frameworks that route through those SDKs (LangChain, LangGraph, LlamaIndex…) are
 captured automatically — no framework-specific setup.
 
+### See it on a real app (no API keys needed)
+
+[`examples/support_triage/`](examples/support_triage/) is a small "existing" app —
+a support-triage assistant that classifies, summarizes, and drafts replies across
+OpenAI + Anthropic. Add one line and see exactly where the money goes:
+
+```bash
+pip install "costgen[all]"
+python examples/support_triage/run.py                 # the app today (no cost info)
+python examples/support_triage/run.py --with-costgen  # + costgen.install()
+```
+
+```
+By model:
+  claude-opus-4-8          $0.114750     <-- 92% of spend (your optimization target)
+  claude-haiku-4-5         $0.010250
+  gpt-4o-mini              $0.000189
+```
+
 ## Attribute cost to features
 
 ```python

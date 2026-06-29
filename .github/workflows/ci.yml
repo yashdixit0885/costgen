@@ -20,7 +20,7 @@ jobs:
       - name: Install package + extras
         run: uv pip install -e ".[all,dev]"
       - name: Lint
-        run: uv run ruff check src tests
+        run: uv run ruff check src tests examples
       - name: Test + coverage
         run: uv run pytest --cov=costgen --cov-report=term-missing
       - name: Enforce 100% coverage on cost-math core (Constitution IV)
