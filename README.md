@@ -1,5 +1,6 @@
 # costgen
 
+[![PyPI](https://img.shields.io/pypi/v/costgen.svg)](https://pypi.org/project/costgen/)
 [![CI](https://github.com/yashdixit0885/costgen/actions/workflows/ci.yml/badge.svg)](https://github.com/yashdixit0885/costgen/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
@@ -53,15 +54,13 @@ By model:
 ## Install
 
 ```bash
-pip install "costgen[all]"        # once published to PyPI
+pip install "costgen[all]"        # or: uv pip install "costgen[all]"
 ```
 
-Until the first PyPI release (and for the latest from `main`), install from source:
+For the latest unreleased changes, install from `main`:
 
 ```bash
 pip install "costgen[all] @ git+https://github.com/yashdixit0885/costgen.git"
-# or with uv:
-uv pip install "costgen[all] @ git+https://github.com/yashdixit0885/costgen.git"
 ```
 
 Pick only the extras you need:
